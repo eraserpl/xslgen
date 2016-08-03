@@ -33,9 +33,20 @@
         </xsl:call-template>
 
         <!--Вычисление значений-->
-        <xsl:variable name="КодСобытия" select="SystemEventNotification/Document/EvtInf/EvtCd"/>
+        <xsl:variable name="КодСобытия" select="SystemEventNotification/Document/EvtInf/EvtCd"/>        
         <xsl:variable name="ПараметрСобытия" select="SystemEventNotification/Document/EvtInf/EvtParam"/>
         <xsl:variable name="ВремяСобытия" select="SystemEventNotification/Document/EvtInf/EvtTm"/>
+        <xsl:variable name="ОписаниеСобытия">
+            <xsl:choose>
+                <xsl:when test="$КодСобытия='PACK'">Принято</xsl:when>
+                <xsl:when test="$КодСобытия='RCIS'">Принято эмитентом или регистратором</xsl:when>
+                <xsl:when test="$КодСобытия='NOIN'">Не получено</xsl:when>
+                <xsl:when test="$КодСобытия='COMP'">Завершено</xsl:when>
+                <xsl:when test="$КодСобытия='NWID'">Новый код события</xsl:when>
+                <xsl:when test="$КодСобытия='CHAN'">Изменение параметров КД</xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        
 
         <!--Рендеринг-->
         <xsl:if test="string-length($КодСобытия) &gt; 0 or
@@ -53,7 +64,13 @@
                 <tbody>
                     <xsl:call-template name="fRenderNameValueTableRow">
                         <xsl:with-param name="name">Код события</xsl:with-param>
-                        <xsl:with-param name="scalarValue" select="$КодСобытия"/>
+                        <xsl:with-param name="scalarValue">
+                            <xsl:value-of select="$КодСобытия"/>
+                            <xsl:if test="string-length($ОписаниеСобытия) &gt; 0">
+                                - 
+                                <xsl:value-of select="$ОписаниеСобытия"/>
+                            </xsl:if>
+                        </xsl:with-param>
                     </xsl:call-template>
                     <xsl:call-template name="fRenderNameValueTableRow">
                         <xsl:with-param name="name">Параметр события</xsl:with-param>
