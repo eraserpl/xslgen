@@ -136,12 +136,25 @@ xmlns:msxsl="http://exslt.org/common"
 
         <!--Вычисление значений-->
         <xsl:variable name="РеференсКорпоративногоДействия" select="//CorpActnEvtId"/>
+        <xsl:variable name="ТипОбработкиИнформацииОКорпоративномДействии" select="//EvtPrcgTp/Cd"/>
         <xsl:variable name="КодТипаКД" select="//EvtTp/Cd"/>
+        <xsl:variable name="ПризнакДобровольности">
+            <xsl:call-template name="fGetEnumDescriptionFromXsd">
+                <xsl:with-param name="value" select="//MndtryVlntryEvtTp/Cd"/>
+                <xsl:with-param name="simpleTypeName">CorporateActionMandatoryVoluntary1Code</xsl:with-param>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="ДополнительнаяИнструкция" select="//OthrDocId/Id/AcctOwnrDocId" />
+        <xsl:variable name="РеференсПредыдущейВедомости" select="//PrvsCorpActnMvmntRprt" />
 
         <!--Рендеринг-->
         <xsl:if
                 test="string-length($РеференсКорпоративногоДействия) &gt; 0 or
-            string-length($КодТипаКД) &gt; 0">
+                string-length($ТипОбработкиИнформацииОКорпоративномДействии) &gt; 0 or
+                string-length($КодТипаКД) &gt; 0 or
+                string-length($ПризнакДобровольности) &gt; 0 or
+                string-length($ДополнительнаяИнструкция) &gt; 0 or
+                string-length($РеференсПредыдущейВедомости) &gt; 0">
             <table>
                 <xsl:call-template name="fSetStyle">
                     <xsl:with-param name="name">table</xsl:with-param>
@@ -154,12 +167,27 @@ xmlns:msxsl="http://exslt.org/common"
                 <tbody>
                     <xsl:call-template name="fRenderNameValueTableRow">
                         <xsl:with-param name="name">Референс корпоративного действия</xsl:with-param>
-                        <xsl:with-param name="scalarValue" select="$РеференсКорпоративногоДействия"
-                                />
+                        <xsl:with-param name="scalarValue" select="$РеференсКорпоративногоДействия"/>
+                    </xsl:call-template>
+                    <xsl:call-template name="fRenderNameValueTableRow">
+                        <xsl:with-param name="name">Тип обработки информации о корпоративном действии</xsl:with-param>
+                        <xsl:with-param name="scalarValue" select="$ТипОбработкиИнформацииОКорпоративномДействии"/>
                     </xsl:call-template>
                     <xsl:call-template name="fRenderNameValueTableRow">
                         <xsl:with-param name="name">Код типа корпоративного действия</xsl:with-param>
                         <xsl:with-param name="scalarValue" select="$КодТипаКД"/>
+                    </xsl:call-template>
+                    <xsl:call-template name="fRenderNameValueTableRow">
+                        <xsl:with-param name="name">Признак добровольности</xsl:with-param>
+                        <xsl:with-param name="scalarValue" select="$ПризнакДобровольности"/>
+                    </xsl:call-template>
+                    <xsl:call-template name="fRenderNameValueTableRow">
+                        <xsl:with-param name="name">Дополнительная инструкция</xsl:with-param>
+                        <xsl:with-param name="scalarValue" select="$ДополнительнаяИнструкция"/>
+                    </xsl:call-template>
+                    <xsl:call-template name="fRenderNameValueTableRow">
+                        <xsl:with-param name="name">Референс предыдущей ведомости</xsl:with-param>
+                        <xsl:with-param name="scalarValue" select="$РеференсПредыдущейВедомости"/>
                     </xsl:call-template>
                 </tbody>
             </table>
@@ -187,13 +215,15 @@ xmlns:msxsl="http://exslt.org/common"
                       select="$path/OthrId/Id[../Tp/Prtry = 'NSDR']"/>
         <xsl:variable name="ГосРегНомерИдентификационныйКод"
                       select="$path/OthrId/Id[../Tp/Prtry = 'RU']"/>
+        <xsl:variable name="ДатаВыпуска" select="../IsseDt"/>
 
         <!--Рендеринг-->
         <xsl:if
                 test="string-length($Наименование) &gt; 0 or
             string-length($ISIN) &gt; 0 or
             string-length($ДепозитарныйКод) &gt; 0 or
-            string-length($ГосРегНомерИдентификационныйКод) &gt; 0">
+            string-length($ГосРегНомерИдентификационныйКод) &gt; 0 or
+            string-length($ДатаВыпуска) &gt; 0">
             <table>
                 <xsl:call-template name="fSetStyle">
                     <xsl:with-param name="name">table</xsl:with-param>
@@ -205,22 +235,25 @@ xmlns:msxsl="http://exslt.org/common"
                 </thead>
                 <tbody>
                     <xsl:call-template name="fRenderNameValueTableRow">
-                        <xsl:with-param name="name">Депозитарный код</xsl:with-param>
-                        <xsl:with-param name="scalarValue" select="$ДепозитарныйКод"/>
+                        <xsl:with-param name="name">Наименование</xsl:with-param>
+                        <xsl:with-param name="scalarValue" select="$Наименование"/>
                     </xsl:call-template>
                     <xsl:call-template name="fRenderNameValueTableRow">
                         <xsl:with-param name="name">ISIN</xsl:with-param>
                         <xsl:with-param name="scalarValue" select="$ISIN"/>
                     </xsl:call-template>
                     <xsl:call-template name="fRenderNameValueTableRow">
-                        <xsl:with-param name="name">Гос. рег. номер/ идентификационный код</xsl:with-param>
-                        <xsl:with-param name="scalarValue" select="$ГосРегНомерИдентификационныйКод"
-                                />
+                        <xsl:with-param name="name">Депозитарный код</xsl:with-param>
+                        <xsl:with-param name="scalarValue" select="$ДепозитарныйКод"/>
+                    </xsl:call-template>                    
+                    <xsl:call-template name="fRenderNameValueTableRow">
+                        <xsl:with-param name="name">Гос. рег. номер/идентификационный код</xsl:with-param>
+                        <xsl:with-param name="scalarValue" select="$ГосРегНомерИдентификационныйКод" />
                     </xsl:call-template>
                     <xsl:call-template name="fRenderNameValueTableRow">
-                        <xsl:with-param name="name">Наименование</xsl:with-param>
-                        <xsl:with-param name="scalarValue" select="$Наименование"/>
-                    </xsl:call-template>
+                        <xsl:with-param name="name">Дата выпуска</xsl:with-param>
+                        <xsl:with-param name="scalarValue" select="$ДатаВыпуска" />
+                    </xsl:call-template>                    
                 </tbody>
             </table>
             <br/>

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,32 +34,31 @@ public class Xsd {
         }
     }
 
-    public void validateElement(String xpath) {
+    public List<XsdElement> validateAllPaths(String xpath) {
+        List<XsdElement> result = new ArrayList<>();
 
         List<String> subPaths = new ArrayList<>();
         for (String subPath : xpath.split("/")) {
             try {
                 subPaths.add(subPath);
                 String currentFullSubpath = String.join("/", subPaths);
-                Node node = (Node) xp.evaluate(String.format("//*[xmlxpath='%s']/ancestor::element[1]", currentFullSubpath), doc, XPathConstants.NODE);
-                if (node == null) {
-                    System.out.format("no node for path %s\n", currentFullSubpath);
-                    continue;
-                }
-                Node minOccursNode = node.getAttributes().getNamedItem("minOccurs");
-                Node maxOccursNode = node.getAttributes().getNamedItem("maxOccurs");
-                System.out.format("for element %s [%s, %s]\n", currentFullSubpath,
-                        minOccursNode != null ? minOccursNode.getTextContent() : 1,
-                        maxOccursNode != null ? maxOccursNode.getTextContent() : 1);
+                XsdElement xsdElement = new XsdElement(currentFullSubpath);
+                result.add(xsdElement);
+
+                Node element = (Node) xp.evaluate(String.format("//*[xmlxpath='%s']/ancestor::element[1]", currentFullSubpath), doc, XPathConstants.NODE);
+                xsdElement.loadFromNode(element);
             } catch (XPathExpressionException ex) {
-                Logger.getLogger(Xsd.class.getName()).log(Level.SEVERE, null, ex);
+                throw new RuntimeException(ex);
             }
         }
-
+        return result;
     }
 
     public static void main(String[] args) throws Exception {
 
+        
+        
+//        xsd.validateElement("CorporateActionMovementPreliminaryAdviceReport/Document/CorpActnMvmntRprt/CorpActnGnlInf/EvtPrcgTp/Cd");
 //        System.out.println(node);
 //
 //        TransformerFactory tf = TransformerFactory.newInstance();

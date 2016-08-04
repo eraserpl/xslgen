@@ -41,12 +41,12 @@ public class BlockItem {
         if (xpath == null) return null;
         if (parent == null || parent.getBaseXPath() == null) return xpath;
         String base = parent.getBaseXPath();
-        for (int i = xpath.length(); i > 0; i--) {
-            String substr = xpath.substring(0, i);
-            if (base.contains(substr) && base.lastIndexOf(substr) + substr.length() == base.length() - 1) {
-                return mkXpath(base, xpath.substring(i));
-            }
-        }
+//        for (int i = xpath.length(); i > 0; i--) {
+//            String substr = xpath.substring(0, i);
+//            if (base.contains(substr) && base.lastIndexOf(substr) + substr.length() == base.length() - 1) {
+//                return mkXpath(base, xpath.substring(i));
+//            }
+//        }
         return mkXpath(base, xpath);
     }
 

@@ -15,8 +15,8 @@ public class SEN {
         Block sen = new Block("Уведомление о системном событии", "SEN", "SystemEventNotification/Document/EvtInf");
         pf.add(sen);
         for (BlockItem item : getItems()) sen.addItem(item);
-//        sen.logValidationInfo();
-        System.out.println(pf.print());
+//        sen.validate();
+        pf.print();
     }
 
     private static List<BlockItem> getItems() {

@@ -30,11 +30,11 @@ public class PrintForm {
         blocks.add(block);
     }
 
-    public String print() {
+    public void print() {
         try {
             URL templateUrl = PrintForm.class.getClassLoader().getResource("template.xsl");
             String template = new String(Files.readAllBytes(new File(templateUrl.getFile()).toPath()));
-            return String.format(template, xpath, getBody());
+            System.out.format(template, xpath, getBody());
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -56,9 +56,16 @@ public class PrintForm {
             b.append(String.format("<xsl:call-template name=\"%s\"/>", block.getName()));
         }
         b
-                .append("    </xsl:template>");
+                .append("    </xsl:template>\n\n");
         for (Block block : blocks) b.append(block.getBody());
         return b.toString();
+    }
+
+    public void validate() {
+        for (Block b : blocks) {            
+            b.validate();
+            System.out.println("");
+        }
     }
 
 }
